@@ -7,9 +7,9 @@ namespace Github\Api;
  *
  * @author Joseph Bielawski <stloyd@gmail.com>
  */
-interface ApiInterface
-{
-    public function getPerPage();
+interface ApiInterface {
 
-    public function setPerPage($perPage);
+	public function getPerPage();
+
+	public function setPerPage( $perPage);
 }

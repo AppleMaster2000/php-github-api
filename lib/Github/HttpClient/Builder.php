@@ -21,180 +21,172 @@ use Http\Client\Common\Plugin\Cache\Generator\HeaderCacheKeyGenerator;
  *
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
-class Builder
-{
-    /**
-     * The object that sends HTTP messages.
-     *
-     * @var HttpClient
-     */
-    private $httpClient;
+class Builder {
 
-    /**
-     * A HTTP client with all our plugins.
-     *
-     * @var PluginClient
-     */
-    private $pluginClient;
+	/**
+	 * The object that sends HTTP messages.
+	 *
+	 * @var HttpClient
+	 */
+	private $httpClient;
 
-    /**
-     * @var MessageFactory
-     */
-    private $requestFactory;
+	/**
+	 * A HTTP client with all our plugins.
+	 *
+	 * @var PluginClient
+	 */
+	private $pluginClient;
 
-    /**
-     * @var StreamFactory
-     */
-    private $streamFactory;
+	/**
+	 * @var MessageFactory
+	 */
+	private $requestFactory;
 
-    /**
-     * True if we should create a new Plugin client at next request.
-     *
-     * @var bool
-     */
-    private $httpClientModified = true;
+	/**
+	 * @var StreamFactory
+	 */
+	private $streamFactory;
 
-    /**
-     * @var Plugin[]
-     */
-    private $plugins = [];
+	/**
+	 * True if we should create a new Plugin client at next request.
+	 *
+	 * @var bool
+	 */
+	private $httpClientModified = true;
 
-    /**
-     * This plugin is special treated because it has to be the very last plugin.
-     *
-     * @var Plugin\CachePlugin
-     */
-    private $cachePlugin;
+	/**
+	 * @var Plugin[]
+	 */
+	private $plugins = [];
 
-    /**
-     * Http headers.
-     *
-     * @var array
-     */
-    private $headers = [];
+	/**
+	 * This plugin is special treated because it has to be the very last plugin.
+	 *
+	 * @var Plugin\CachePlugin
+	 */
+	private $cachePlugin;
 
-    /**
-     * @param HttpClient     $httpClient
-     * @param RequestFactory $requestFactory
-     * @param StreamFactory  $streamFactory
-     */
-    public function __construct(
-        HttpClient $httpClient = null,
-        RequestFactory $requestFactory = null,
-        StreamFactory $streamFactory = null
-    ) {
-        $this->httpClient = $httpClient ?: HttpClientDiscovery::find();
-        $this->requestFactory = $requestFactory ?: MessageFactoryDiscovery::find();
-        $this->streamFactory = $streamFactory ?: StreamFactoryDiscovery::find();
-    }
+	/**
+	 * Http headers.
+	 *
+	 * @var array
+	 */
+	private $headers = [];
 
-    /**
-     * @return HttpMethodsClient
-     */
-    public function getHttpClient()
-    {
-        if ($this->httpClientModified) {
-            $this->httpClientModified = false;
+	/**
+	 * @param HttpClient     $httpClient
+	 * @param RequestFactory $requestFactory
+	 * @param StreamFactory  $streamFactory
+	 */
+	public function __construct(
+		HttpClient $httpClient = null,
+		RequestFactory $requestFactory = null,
+		StreamFactory $streamFactory = null
+	) {
+		$this->httpClient = $httpClient ?: HttpClientDiscovery::find();
+		$this->requestFactory = $requestFactory ?: MessageFactoryDiscovery::find();
+		$this->streamFactory = $streamFactory ?: StreamFactoryDiscovery::find();
+	}
 
-            $plugins = $this->plugins;
-            if ($this->cachePlugin) {
-                $plugins[] = $this->cachePlugin;
-            }
+	/**
+	 * @return HttpMethodsClient
+	 */
+	public function getHttpClient() {
+		if ( $this->httpClientModified ) {
+			$this->httpClientModified = false;
 
-            $this->pluginClient = new HttpMethodsClient(
-                new PluginClient($this->httpClient, $plugins),
-                $this->requestFactory
-            );
-        }
+			$plugins = $this->plugins;
+			if ( $this->cachePlugin ) {
+				$plugins[] = $this->cachePlugin;
+			}
 
-        return $this->pluginClient;
-    }
+			$this->pluginClient = new HttpMethodsClient(
+				new PluginClient( $this->httpClient, $plugins ),
+				$this->requestFactory
+			);
+		}
 
-    /**
-     * Add a new plugin to the end of the plugin chain.
-     *
-     * @param Plugin $plugin
-     */
-    public function addPlugin(Plugin $plugin)
-    {
-        $this->plugins[] = $plugin;
-        $this->httpClientModified = true;
-    }
+		return $this->pluginClient;
+	}
 
-    /**
-     * Remove a plugin by its fully qualified class name (FQCN).
-     *
-     * @param string $fqcn
-     */
-    public function removePlugin($fqcn)
-    {
-        foreach ($this->plugins as $idx => $plugin) {
-            if ($plugin instanceof $fqcn) {
-                unset($this->plugins[$idx]);
-                $this->httpClientModified = true;
-            }
-        }
-    }
+	/**
+	 * Add a new plugin to the end of the plugin chain.
+	 *
+	 * @param Plugin $plugin
+	 */
+	public function addPlugin( Plugin $plugin ) {
+		$this->plugins[] = $plugin;
+		$this->httpClientModified = true;
+	}
 
-    /**
-     * Clears used headers.
-     */
-    public function clearHeaders()
-    {
-        $this->headers = [];
+	/**
+	 * Remove a plugin by its fully qualified class name (FQCN).
+	 *
+	 * @param string $fqcn
+	 */
+	public function removePlugin( $fqcn ) {
+		foreach ( $this->plugins as $idx => $plugin ) {
+			if ( $plugin instanceof $fqcn ) {
+				unset( $this->plugins[ $idx ] );
+				$this->httpClientModified = true;
+			}
+		}
+	}
 
-        $this->removePlugin(Plugin\HeaderAppendPlugin::class);
-        $this->addPlugin(new Plugin\HeaderAppendPlugin($this->headers));
-    }
+	/**
+	 * Clears used headers.
+	 */
+	public function clearHeaders() {
+		$this->headers = [];
 
-    /**
-     * @param array $headers
-     */
-    public function addHeaders(array $headers)
-    {
-        $this->headers = array_merge($this->headers, $headers);
+		$this->removePlugin( Plugin\HeaderAppendPlugin::class );
+		$this->addPlugin( new Plugin\HeaderAppendPlugin( $this->headers ) );
+	}
 
-        $this->removePlugin(Plugin\HeaderAppendPlugin::class);
-        $this->addPlugin(new Plugin\HeaderAppendPlugin($this->headers));
-    }
+	/**
+	 * @param array $headers
+	 */
+	public function addHeaders( array $headers ) {
+		$this->headers = array_merge( $this->headers, $headers );
 
-    /**
-     * @param string $header
-     * @param string $headerValue
-     */
-    public function addHeaderValue($header, $headerValue)
-    {
-        if (!isset($this->headers[$header])) {
-            $this->headers[$header] = $headerValue;
-        } else {
-            $this->headers[$header] = array_merge((array)$this->headers[$header], array($headerValue));
-        }
+		$this->removePlugin( Plugin\HeaderAppendPlugin::class );
+		$this->addPlugin( new Plugin\HeaderAppendPlugin( $this->headers ) );
+	}
 
-        $this->removePlugin(Plugin\HeaderAppendPlugin::class);
-        $this->addPlugin(new Plugin\HeaderAppendPlugin($this->headers));
-    }
+	/**
+	 * @param string $header
+	 * @param string $headerValue
+	 */
+	public function addHeaderValue( $header, $headerValue ) {
+		if ( ! isset( $this->headers[ $header ] ) ) {
+			$this->headers[ $header ] = $headerValue;
+		} else {
+			$this->headers[ $header ] = array_merge( (array) $this->headers[ $header ], array( $headerValue ) );
+		}
 
-    /**
-     * Add a cache plugin to cache responses locally.
-     *
-     * @param CacheItemPoolInterface $cachePool
-     * @param array                  $config
-     */
-    public function addCache(CacheItemPoolInterface $cachePool, array $config = [])
-    {
-        if (!isset($config['cache_key_generator'])) {
-            $config['cache_key_generator'] = new HeaderCacheKeyGenerator(['Authorization', 'Cookie', 'Accept', 'Content-type']);
-        }
-        $this->cachePlugin = Plugin\CachePlugin::clientCache($cachePool, $this->streamFactory, $config);
-        $this->httpClientModified = true;
-    }
+		$this->removePlugin( Plugin\HeaderAppendPlugin::class );
+		$this->addPlugin( new Plugin\HeaderAppendPlugin( $this->headers ) );
+	}
 
-    /**
-     * Remove the cache plugin.
-     */
-    public function removeCache()
-    {
-        $this->cachePlugin = null;
-        $this->httpClientModified = true;
-    }
+	/**
+	 * Add a cache plugin to cache responses locally.
+	 *
+	 * @param CacheItemPoolInterface $cachePool
+	 * @param array                  $config
+	 */
+	public function addCache( CacheItemPoolInterface $cachePool, array $config = [] ) {
+		if ( ! isset( $config['cache_key_generator'] ) ) {
+			$config['cache_key_generator'] = new HeaderCacheKeyGenerator( [ 'Authorization', 'Cookie', 'Accept', 'Content-type' ] );
+		}
+		$this->cachePlugin = Plugin\CachePlugin::clientCache( $cachePool, $this->streamFactory, $config );
+		$this->httpClientModified = true;
+	}
+
+	/**
+	 * Remove the cache plugin.
+	 */
+	public function removeCache() {
+		$this->cachePlugin = null;
+		$this->httpClientModified = true;
+	}
 }

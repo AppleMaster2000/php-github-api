@@ -2,18 +2,16 @@
 
 namespace Github\Exception;
 
-class TwoFactorAuthenticationRequiredException extends RuntimeException
-{
-    private $type;
+class TwoFactorAuthenticationRequiredException extends RuntimeException {
 
-    public function __construct($type, $code = 0, $previous = null)
-    {
-        $this->type = $type;
-        parent::__construct('Two factor authentication is enabled on this account', $code, $previous);
-    }
+	private $type;
 
-    public function getType()
-    {
-        return $this->type;
-    }
+	public function __construct( $type, $code = 0, $previous = null ) {
+		$this->type = $type;
+		parent::__construct( 'Two factor authentication is enabled on this account', $code, $previous );
+	}
+
+	public function getType() {
+		return $this->type;
+	}
 }

@@ -12,27 +12,24 @@ use Psr\Http\Message\ResponseInterface;
  *
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
-class History implements Journal
-{
-    /**
-     * @var ResponseInterface
-     */
-    private $lastResponse;
+class History implements Journal {
 
-    /**
-     * @return ResponseInterface|null
-     */
-    public function getLastResponse()
-    {
-        return $this->lastResponse;
-    }
+	/**
+	 * @var ResponseInterface
+	 */
+	private $lastResponse;
 
-    public function addSuccess(RequestInterface $request, ResponseInterface $response)
-    {
-        $this->lastResponse = $response;
-    }
+	/**
+	 * @return ResponseInterface|null
+	 */
+	public function getLastResponse() {
+		return $this->lastResponse;
+	}
 
-    public function addFailure(RequestInterface $request, Exception $exception)
-    {
-    }
+	public function addSuccess( RequestInterface $request, ResponseInterface $response ) {
+		$this->lastResponse = $response;
+	}
+
+	public function addFailure( RequestInterface $request, Exception $exception ) {
+	}
 }

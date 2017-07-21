@@ -11,59 +11,56 @@ use Github\Exception\MissingArgumentException;
  * @author Joseph Bielawski <stloyd@gmail.com>
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
-class Blobs extends AbstractApi
-{
-    use AcceptHeaderTrait;
+class Blobs extends AbstractApi {
 
-    /**
-     * Configure the Accept header depending on the blob type.
-     *
-     * @param string|null $bodyType
-     *
-     * @return self
-     */
-    public function configure($bodyType = null)
-    {
-        if ('raw' === $bodyType) {
-            $this->acceptHeaderValue = sprintf('application/vnd.github.%s.raw', $this->client->getApiVersion());
-        }
+	use AcceptHeaderTrait;
 
-        return $this;
-    }
+	/**
+	 * Configure the Accept header depending on the blob type.
+	 *
+	 * @param string|null $bodyType
+	 *
+	 * @return self
+	 */
+	public function configure( $bodyType = null ) {
+		if ( 'raw' === $bodyType ) {
+			$this->acceptHeaderValue = sprintf( 'application/vnd.github.%s.raw', $this->client->getApiVersion() );
+		}
 
-    /**
-     * Show a blob of a sha for a repository.
-     *
-     * @param string $username
-     * @param string $repository
-     * @param string $sha
-     *
-     * @return array
-     */
-    public function show($username, $repository, $sha)
-    {
-        $response = $this->get('/repos/'.rawurlencode($username).'/'.rawurlencode($repository).'/git/blobs/'.rawurlencode($sha));
+		return $this;
+	}
 
-        return $response;
-    }
+	/**
+	 * Show a blob of a sha for a repository.
+	 *
+	 * @param string $username
+	 * @param string $repository
+	 * @param string $sha
+	 *
+	 * @return array
+	 */
+	public function show( $username, $repository, $sha ) {
+		$response = $this->get( '/repos/' . rawurlencode( $username ) . '/' . rawurlencode( $repository ) . '/git/blobs/' . rawurlencode( $sha ) );
 
-    /**
-     * Create a blob of a sha for a repository.
-     *
-     * @param string $username
-     * @param string $repository
-     * @param array  $params
-     *
-     * @return array
-     *
-     * @throws \Github\Exception\MissingArgumentException
-     */
-    public function create($username, $repository, array $params)
-    {
-        if (!isset($params['content'], $params['encoding'])) {
-            throw new MissingArgumentException(array('content', 'encoding'));
-        }
+		return $response;
+	}
 
-        return $this->post('/repos/'.rawurlencode($username).'/'.rawurlencode($repository).'/git/blobs', $params);
-    }
+	/**
+	 * Create a blob of a sha for a repository.
+	 *
+	 * @param string $username
+	 * @param string $repository
+	 * @param array  $params
+	 *
+	 * @return array
+	 *
+	 * @throws \Github\Exception\MissingArgumentException
+	 */
+	public function create( $username, $repository, array $params ) {
+		if ( ! isset( $params['content'], $params['encoding'] ) ) {
+			throw new MissingArgumentException( array( 'content', 'encoding' ) );
+		}
+
+		return $this->post( '/repos/' . rawurlencode( $username ) . '/' . rawurlencode( $repository ) . '/git/blobs', $params );
+	}
 }

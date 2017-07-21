@@ -8,39 +8,36 @@ namespace Github\Api;
  * @link   https://developer.github.com/v3/rate_limit/
  * @author Jeff Finley <quickliketurtle@gmail.com>
  */
-class RateLimit extends AbstractApi
-{
-    /**
-     * Get rate limits
-     *
-     * @return array
-     */
-    public function getRateLimits()
-    {
-        return $this->get('/rate_limit');
-    }
+class RateLimit extends AbstractApi {
 
-    /**
-     * Get core rate limit
-     *
-     * @return integer
-     */
-    public function getCoreLimit()
-    {
-        $response = $this->getRateLimits();
+	/**
+	 * Get rate limits
+	 *
+	 * @return array
+	 */
+	public function getRateLimits() {
+		return $this->get( '/rate_limit' );
+	}
 
-        return $response['resources']['core']['limit'];
-    }
+	/**
+	 * Get core rate limit
+	 *
+	 * @return integer
+	 */
+	public function getCoreLimit() {
+		$response = $this->getRateLimits();
 
-    /**
-     * Get search rate limit
-     *
-     * @return integer
-     */
-    public function getSearchLimit()
-    {
-        $response = $this->getRateLimits();
+		return $response['resources']['core']['limit'];
+	}
 
-        return $response['resources']['search']['limit'];
-    }
+	/**
+	 * Get search rate limit
+	 *
+	 * @return integer
+	 */
+	public function getSearchLimit() {
+		$response = $this->getRateLimits();
+
+		return $response['resources']['search']['limit'];
+	}
 }

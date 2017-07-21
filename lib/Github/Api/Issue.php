@@ -17,232 +17,231 @@ use Github\Exception\MissingArgumentException;
  * @author Thibault Duplessis <thibault.duplessis at gmail dot com>
  * @author Joseph Bielawski <stloyd@gmail.com>
  */
-class Issue extends AbstractApi
-{
-    use AcceptHeaderTrait;
+class Issue extends AbstractApi {
 
-    /**
-     * Configure the body type.
-     *
-     * @link https://developer.github.com/v3/issues/#custom-media-types
-     * @param string|null $bodyType
-     *
-     * @return self
-     */
-    public function configure($bodyType = null)
-    {
-        if (!in_array($bodyType, array('text', 'html', 'full'))) {
-            $bodyType = 'raw';
-        }
+	use AcceptHeaderTrait;
 
-        $this->acceptHeaderValue = sprintf('application/vnd.github.%s.%s+json', $this->client->getApiVersion(), $bodyType);
+	/**
+	 * Configure the body type.
+	 *
+	 * @link https://developer.github.com/v3/issues/#custom-media-types
+	 * @param string|null $bodyType
+	 *
+	 * @return self
+	 */
+	public function configure( $bodyType = null ) {
+		if ( ! in_array( $bodyType, array( 'text', 'html', 'full' ) ) ) {
+			$bodyType = 'raw';
+		}
 
-        return $this;
-    }
+		$this->acceptHeaderValue = sprintf( 'application/vnd.github.%s.%s+json', $this->client->getApiVersion(), $bodyType );
 
-    /**
-     * List issues by username, repo and state.
-     *
-     * @link http://developer.github.com/v3/issues/
-     *
-     * @param string $username   the username
-     * @param string $repository the repository
-     * @param array  $params     the additional parameters like milestone, assignees, labels, sort, direction
-     *
-     * @return array list of issues found
-     */
-    public function all($username, $repository, array $params = array())
-    {
-        return $this->get('/repos/'.rawurlencode($username).'/'.rawurlencode($repository).'/issues', array_merge(array('page' => 1), $params));
-    }
+		return $this;
+	}
 
-    /**
-     * Search issues by username, repo, state and keyword.
-     *
-     * @link http://developer.github.com/v3/search/#search-issues
-     *
-     * @param string $username   the username
-     * @param string $repository the repository
-     * @param string $state      the issue state, can be open or closed
-     * @param string $keyword    the keyword to filter issues by
-     *
-     * @return array list of issues found
-     */
-    public function find($username, $repository, $state, $keyword)
-    {
-        if (!in_array($state, array('open', 'closed'))) {
-            $state = 'open';
-        }
+	/**
+	 * List issues by username, repo and state.
+	 *
+	 * @link http://developer.github.com/v3/issues/
+	 *
+	 * @param string $username   the username
+	 * @param string $repository the repository
+	 * @param array  $params     the additional parameters like milestone, assignees, labels, sort, direction
+	 *
+	 * @return array list of issues found
+	 */
+	public function all( $username, $repository, array $params = array() ) {
+		return $this->get(
+			'/repos/' . rawurlencode( $username ) . '/' . rawurlencode( $repository ) . '/issues', array_merge(
+				array(
+					'page' => 1,
+				), $params
+			)
+		);
+	}
 
-        return $this->get('/legacy/issues/search/'.rawurlencode($username).'/'.rawurlencode($repository).'/'.rawurlencode($state).'/'.rawurlencode($keyword));
-    }
+	/**
+	 * Search issues by username, repo, state and keyword.
+	 *
+	 * @link http://developer.github.com/v3/search/#search-issues
+	 *
+	 * @param string $username   the username
+	 * @param string $repository the repository
+	 * @param string $state      the issue state, can be open or closed
+	 * @param string $keyword    the keyword to filter issues by
+	 *
+	 * @return array list of issues found
+	 */
+	public function find( $username, $repository, $state, $keyword ) {
+		if ( ! in_array( $state, array( 'open', 'closed' ) ) ) {
+			$state = 'open';
+		}
 
-    /**
-     * List issues by organization.
-     *
-     * @link http://developer.github.com/v3/issues/
-     *
-     * @param string $organization the organization
-     * @param string $state        the issue state, can be open or closed
-     * @param array  $params       the additional parameters like milestone, assignees, labels, sort, direction
-     *
-     * @return array list of issues found
-     */
-    public function org($organization, $state, array $params = array())
-    {
-        if (!in_array($state, array('open', 'closed'))) {
-            $state = 'open';
-        }
+		return $this->get( '/legacy/issues/search/' . rawurlencode( $username ) . '/' . rawurlencode( $repository ) . '/' . rawurlencode( $state ) . '/' . rawurlencode( $keyword ) );
+	}
 
-        return $this->get('/orgs/'.rawurlencode($organization).'/issues', array_merge(array('page' => 1, 'state' => $state), $params));
-    }
+	/**
+	 * List issues by organization.
+	 *
+	 * @link http://developer.github.com/v3/issues/
+	 *
+	 * @param string $organization the organization
+	 * @param string $state        the issue state, can be open or closed
+	 * @param array  $params       the additional parameters like milestone, assignees, labels, sort, direction
+	 *
+	 * @return array list of issues found
+	 */
+	public function org( $organization, $state, array $params = array() ) {
+		if ( ! in_array( $state, array( 'open', 'closed' ) ) ) {
+			$state = 'open';
+		}
 
-    /**
-     * Get extended information about an issue by its username, repo and number.
-     *
-     * @link http://developer.github.com/v3/issues/
-     *
-     * @param string $username   the username
-     * @param string $repository the repository
-     * @param string $id         the issue number
-     *
-     * @return array information about the issue
-     */
-    public function show($username, $repository, $id)
-    {
-        return $this->get('/repos/'.rawurlencode($username).'/'.rawurlencode($repository).'/issues/'.rawurlencode($id));
-    }
+		return $this->get(
+			'/orgs/' . rawurlencode( $organization ) . '/issues', array_merge(
+				array(
+					'page' => 1,
+					'state' => $state,
+				), $params
+			)
+		);
+	}
 
-    /**
-     * Create a new issue for the given username and repo.
-     * The issue is assigned to the authenticated user. Requires authentication.
-     *
-     * @link http://developer.github.com/v3/issues/
-     *
-     * @param string $username   the username
-     * @param string $repository the repository
-     * @param array  $params     the new issue data
-     *
-     * @throws MissingArgumentException
-     *
-     * @return array information about the issue
-     */
-    public function create($username, $repository, array $params)
-    {
-        if (!isset($params['title'], $params['body'])) {
-            throw new MissingArgumentException(array('title', 'body'));
-        }
+	/**
+	 * Get extended information about an issue by its username, repo and number.
+	 *
+	 * @link http://developer.github.com/v3/issues/
+	 *
+	 * @param string $username   the username
+	 * @param string $repository the repository
+	 * @param string $id         the issue number
+	 *
+	 * @return array information about the issue
+	 */
+	public function show( $username, $repository, $id ) {
+		return $this->get( '/repos/' . rawurlencode( $username ) . '/' . rawurlencode( $repository ) . '/issues/' . rawurlencode( $id ) );
+	}
 
-        return $this->post('/repos/'.rawurlencode($username).'/'.rawurlencode($repository).'/issues', $params);
-    }
+	/**
+	 * Create a new issue for the given username and repo.
+	 * The issue is assigned to the authenticated user. Requires authentication.
+	 *
+	 * @link http://developer.github.com/v3/issues/
+	 *
+	 * @param string $username   the username
+	 * @param string $repository the repository
+	 * @param array  $params     the new issue data
+	 *
+	 * @throws MissingArgumentException
+	 *
+	 * @return array information about the issue
+	 */
+	public function create( $username, $repository, array $params ) {
+		if ( ! isset( $params['title'], $params['body'] ) ) {
+			throw new MissingArgumentException( array( 'title', 'body' ) );
+		}
 
-    /**
-     * Update issue information's by username, repo and issue number. Requires authentication.
-     *
-     * @link http://developer.github.com/v3/issues/
-     *
-     * @param string $username   the username
-     * @param string $repository the repository
-     * @param string $id         the issue number
-     * @param array  $params     key=>value user attributes to update.
-     *                           key can be title or body
-     *
-     * @return array information about the issue
-     */
-    public function update($username, $repository, $id, array $params)
-    {
-        return $this->patch('/repos/'.rawurlencode($username).'/'.rawurlencode($repository).'/issues/'.rawurlencode($id), $params);
-    }
+		return $this->post( '/repos/' . rawurlencode( $username ) . '/' . rawurlencode( $repository ) . '/issues', $params );
+	}
 
-    /**
-     * Lock an issue. Users with push access can lock an issue's conversation.
-     *
-     * @link https://developer.github.com/v3/issues/#lock-an-issue
-     *
-     * @param string $username
-     * @param string $repository
-     * @param string $id
-     *
-     * @return string
-     */
-    public function lock($username, $repository, $id)
-    {
-        return $this->put('/repos/'.rawurlencode($username).'/'.rawurlencode($repository).'/issues/'.rawurlencode($id).'/lock');
-    }
+	/**
+	 * Update issue information's by username, repo and issue number. Requires authentication.
+	 *
+	 * @link http://developer.github.com/v3/issues/
+	 *
+	 * @param string $username   the username
+	 * @param string $repository the repository
+	 * @param string $id         the issue number
+	 * @param array  $params     key=>value user attributes to update.
+	 *                           key can be title or body
+	 *
+	 * @return array information about the issue
+	 */
+	public function update( $username, $repository, $id, array $params ) {
+		return $this->patch( '/repos/' . rawurlencode( $username ) . '/' . rawurlencode( $repository ) . '/issues/' . rawurlencode( $id ), $params );
+	}
 
-    /**
-     * Unlock an issue. Users with push access can unlock an issue's conversation.
-     *
-     * @link https://developer.github.com/v3/issues/#lock-an-issue
-     *
-     * @param string $username
-     * @param string $repository
-     * @param string $id
-     *
-     * @return string
-     */
-    public function unlock($username, $repository, $id)
-    {
-        return $this->delete('/repos/'.rawurlencode($username).'/'.rawurlencode($repository).'/issues/'.rawurlencode($id).'/lock');
-    }
+	/**
+	 * Lock an issue. Users with push access can lock an issue's conversation.
+	 *
+	 * @link https://developer.github.com/v3/issues/#lock-an-issue
+	 *
+	 * @param string $username
+	 * @param string $repository
+	 * @param string $id
+	 *
+	 * @return string
+	 */
+	public function lock( $username, $repository, $id ) {
+		return $this->put( '/repos/' . rawurlencode( $username ) . '/' . rawurlencode( $repository ) . '/issues/' . rawurlencode( $id ) . '/lock' );
+	}
 
-    /**
-     * List an issue comments.
-     *
-     * @link http://developer.github.com/v3/issues/comments/
-     *
-     * @return Comments
-     */
-    public function comments()
-    {
-        return new Comments($this->client);
-    }
+	/**
+	 * Unlock an issue. Users with push access can unlock an issue's conversation.
+	 *
+	 * @link https://developer.github.com/v3/issues/#lock-an-issue
+	 *
+	 * @param string $username
+	 * @param string $repository
+	 * @param string $id
+	 *
+	 * @return string
+	 */
+	public function unlock( $username, $repository, $id ) {
+		return $this->delete( '/repos/' . rawurlencode( $username ) . '/' . rawurlencode( $repository ) . '/issues/' . rawurlencode( $id ) . '/lock' );
+	}
 
-    /**
-     * List all project events.
-     *
-     * @link http://developer.github.com/v3/issues/events/
-     *
-     * @return Events
-     */
-    public function events()
-    {
-        return new Events($this->client);
-    }
+	/**
+	 * List an issue comments.
+	 *
+	 * @link http://developer.github.com/v3/issues/comments/
+	 *
+	 * @return Comments
+	 */
+	public function comments() {
+		return new Comments( $this->client );
+	}
 
-    /**
-     * List all project labels.
-     *
-     * @link http://developer.github.com/v3/issues/labels/
-     *
-     * @return Labels
-     */
-    public function labels()
-    {
-        return new Labels($this->client);
-    }
+	/**
+	 * List all project events.
+	 *
+	 * @link http://developer.github.com/v3/issues/events/
+	 *
+	 * @return Events
+	 */
+	public function events() {
+		return new Events( $this->client );
+	}
 
-    /**
-     * List all project milestones.
-     *
-     * @link http://developer.github.com/v3/issues/milestones/
-     *
-     * @return Milestones
-     */
-    public function milestones()
-    {
-        return new Milestones($this->client);
-    }
+	/**
+	 * List all project labels.
+	 *
+	 * @link http://developer.github.com/v3/issues/labels/
+	 *
+	 * @return Labels
+	 */
+	public function labels() {
+		return new Labels( $this->client );
+	}
 
-    /**
-     * List all assignees.
-     *
-     * @link https://developer.github.com/v3/issues/assignees/
-     *
-     * @return Assignees
-     */
-    public function assignees()
-    {
-        return new Assignees($this->client);
-    }
+	/**
+	 * List all project milestones.
+	 *
+	 * @link http://developer.github.com/v3/issues/milestones/
+	 *
+	 * @return Milestones
+	 */
+	public function milestones() {
+		return new Milestones( $this->client );
+	}
+
+	/**
+	 * List all assignees.
+	 *
+	 * @link https://developer.github.com/v3/issues/assignees/
+	 *
+	 * @return Assignees
+	 */
+	public function assignees() {
+		return new Assignees( $this->client );
+	}
 }

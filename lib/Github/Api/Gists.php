@@ -12,103 +12,90 @@ use Github\Api\Gist\Comments;
  * @author Joseph Bielawski <stloyd@gmail.com>
  * @author Edoardo Rivello <edoardo.rivello at gmail dot com>
  */
-class Gists extends AbstractApi
-{
-    use AcceptHeaderTrait;
+class Gists extends AbstractApi {
 
-    /**
-     * Configure the body type.
-     *
-     * @link https://developer.github.com/v3/gists/#custom-media-types
-     * @param string|null $bodyType
-     *
-     * @return self
-     */
-    public function configure($bodyType = null)
-    {
-        if (!in_array($bodyType, array('base64'))) {
-            $bodyType = 'raw';
-        }
+	use AcceptHeaderTrait;
 
-        $this->acceptHeaderValue = sprintf('application/vnd.github.%s.%s', $this->client->getApiVersion(), $bodyType);
+	/**
+	 * Configure the body type.
+	 *
+	 * @link https://developer.github.com/v3/gists/#custom-media-types
+	 * @param string|null $bodyType
+	 *
+	 * @return self
+	 */
+	public function configure( $bodyType = null ) {
+		if ( ! in_array( $bodyType, array( 'base64' ) ) ) {
+			$bodyType = 'raw';
+		}
 
-        return $this;
-    }
+		$this->acceptHeaderValue = sprintf( 'application/vnd.github.%s.%s', $this->client->getApiVersion(), $bodyType );
 
-    public function all($type = null)
-    {
-        if (!in_array($type, array('public', 'starred'))) {
-            return $this->get('/gists');
-        }
+		return $this;
+	}
 
-        return $this->get('/gists/'.rawurlencode($type));
-    }
+	public function all( $type = null ) {
+		if ( ! in_array( $type, array( 'public', 'starred' ) ) ) {
+			return $this->get( '/gists' );
+		}
 
-    public function show($number)
-    {
-        return $this->get('/gists/'.rawurlencode($number));
-    }
+		return $this->get( '/gists/' . rawurlencode( $type ) );
+	}
 
-    public function create(array $params)
-    {
-        if (!isset($params['files']) || (!is_array($params['files']) || 0 === count($params['files']))) {
-            throw new MissingArgumentException('files');
-        }
+	public function show( $number ) {
+		return $this->get( '/gists/' . rawurlencode( $number ) );
+	}
 
-        $params['public'] = (bool) $params['public'];
+	public function create( array $params ) {
+		if ( ! isset( $params['files'] ) || ( ! is_array( $params['files'] ) || 0 === count( $params['files'] )) ) {
+			throw new MissingArgumentException( 'files' );
+		}
 
-        return $this->post('/gists', $params);
-    }
+		$params['public'] = (bool) $params['public'];
 
-    public function update($id, array $params)
-    {
-        return $this->patch('/gists/'.rawurlencode($id), $params);
-    }
+		return $this->post( '/gists', $params );
+	}
 
-    public function commits($id)
-    {
-        return $this->get('/gists/'.rawurlencode($id).'/commits');
-    }
+	public function update( $id, array $params ) {
+		return $this->patch( '/gists/' . rawurlencode( $id ), $params );
+	}
 
-    public function fork($id)
-    {
-        return $this->post('/gists/'.rawurlencode($id).'/fork');
-    }
+	public function commits( $id ) {
+		return $this->get( '/gists/' . rawurlencode( $id ) . '/commits' );
+	}
 
-    public function forks($id)
-    {
-        return $this->get('/gists/'.rawurlencode($id).'/forks');
-    }
+	public function fork( $id ) {
+		return $this->post( '/gists/' . rawurlencode( $id ) . '/fork' );
+	}
 
-    public function remove($id)
-    {
-        return $this->delete('/gists/'.rawurlencode($id));
-    }
+	public function forks( $id ) {
+		return $this->get( '/gists/' . rawurlencode( $id ) . '/forks' );
+	}
 
-    public function check($id)
-    {
-        return $this->get('/gists/'.rawurlencode($id).'/star');
-    }
+	public function remove( $id ) {
+		return $this->delete( '/gists/' . rawurlencode( $id ) );
+	}
 
-    public function star($id)
-    {
-        return $this->put('/gists/'.rawurlencode($id).'/star');
-    }
+	public function check( $id ) {
+		return $this->get( '/gists/' . rawurlencode( $id ) . '/star' );
+	}
 
-    public function unstar($id)
-    {
-        return $this->delete('/gists/'.rawurlencode($id).'/star');
-    }
+	public function star( $id ) {
+		return $this->put( '/gists/' . rawurlencode( $id ) . '/star' );
+	}
 
-    /**
-     * Get a gist's comments.
-     *
-     * @link http://developer.github.com/v3/gists/comments/
-     *
-     * @return Comments
-     */
-    public function comments()
-    {
-        return new Comments($this->client);
-    }
+	public function unstar( $id ) {
+		return $this->delete( '/gists/' . rawurlencode( $id ) . '/star' );
+	}
+
+	/**
+	 * Get a gist's comments.
+	 *
+	 * @link http://developer.github.com/v3/gists/comments/
+	 *
+	 * @return Comments
+	 */
+	public function comments() {
+		return new Comments( $this->client );
+	}
 }
