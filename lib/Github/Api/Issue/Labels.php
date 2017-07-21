@@ -10,174 +10,165 @@ use Github\Exception\MissingArgumentException;
  * @link   http://developer.github.com/v3/issues/labels/
  * @author Joseph Bielawski <stloyd@gmail.com>
  */
-class Labels extends AbstractApi
-{
-    /**
-     * Get all labels for a repository or the labels for a specific issue.
-     *
-     * @link https://developer.github.com/v3/issues/labels/#list-labels-on-an-issue
-     * @param string   $username
-     * @param string   $repository
-     * @param int|null $issue
-     *
-     * @return array
-     */
-    public function all($username, $repository, $issue = null)
-    {
-        if ($issue === null) {
-            $path = '/repos/'.rawurlencode($username).'/'.rawurlencode($repository).'/labels';
-        } else {
-            $path = '/repos/'.rawurlencode($username).'/'.rawurlencode($repository).'/issues/'.rawurlencode($issue).'/labels';
-        }
+class Labels extends AbstractApi {
 
-        return $this->get($path);
-    }
+	/**
+	 * Get all labels for a repository or the labels for a specific issue.
+	 *
+	 * @link https://developer.github.com/v3/issues/labels/#list-labels-on-an-issue
+	 * @param string   $username
+	 * @param string   $repository
+	 * @param int|null $issue
+	 *
+	 * @return array
+	 */
+	public function all( $username, $repository, $issue = null ) {
+		if ( $issue === null ) {
+			$path = '/repos/' . rawurlencode( $username ) . '/' . rawurlencode( $repository ) . '/labels';
+		} else {
+			$path = '/repos/' . rawurlencode( $username ) . '/' . rawurlencode( $repository ) . '/issues/' . rawurlencode( $issue ) . '/labels';
+		}
 
-    /**
-     * Get a single label.
-     *
-     * @link https://developer.github.com/v3/issues/labels/#get-a-single-label
-     *
-     * @param string $username
-     * @param string $repository
-     * @param string $label
-     *
-     * @return array
-     */
-    public function show($username, $repository, $label)
-    {
-        return $this->get('/repos/'.rawurlencode($username).'/'.rawurlencode($repository).'/labels/'.rawurlencode($label));
-    }
+		return $this->get( $path );
+	}
 
-    /**
-     * Create a label for a repository.
-     *
-     * @link https://developer.github.com/v3/issues/labels/#create-a-label
-     * @param string $username
-     * @param string $repository
-     * @param array  $params
-     *
-     * @return array
-     *
-     * @throws \Github\Exception\MissingArgumentException
-     */
-    public function create($username, $repository, array $params)
-    {
-        if (!isset($params['name'])) {
-            throw new MissingArgumentException('name');
-        }
-        if (!isset($params['color'])) {
-            $params['color'] = 'FFFFFF';
-        }
+	/**
+	 * Get a single label.
+	 *
+	 * @link https://developer.github.com/v3/issues/labels/#get-a-single-label
+	 *
+	 * @param string $username
+	 * @param string $repository
+	 * @param string $label
+	 *
+	 * @return array
+	 */
+	public function show( $username, $repository, $label ) {
+		return $this->get( '/repos/' . rawurlencode( $username ) . '/' . rawurlencode( $repository ) . '/labels/' . rawurlencode( $label ) );
+	}
 
-        return $this->post('/repos/'.rawurlencode($username).'/'.rawurlencode($repository).'/labels', $params);
-    }
+	/**
+	 * Create a label for a repository.
+	 *
+	 * @link https://developer.github.com/v3/issues/labels/#create-a-label
+	 * @param string $username
+	 * @param string $repository
+	 * @param array  $params
+	 *
+	 * @return array
+	 *
+	 * @throws \Github\Exception\MissingArgumentException
+	 */
+	public function create( $username, $repository, array $params ) {
+		if ( ! isset( $params['name'] ) ) {
+			throw new MissingArgumentException( 'name' );
+		}
+		if ( ! isset( $params['color'] ) ) {
+			$params['color'] = 'FFFFFF';
+		}
 
-    /**
-     * Delete a label for a repository.
-     *
-     * @link https://developer.github.com/v3/issues/labels/#remove-a-label-from-an-issue
-     * @param string $username
-     * @param string $repository
-     * @param string $label
-     *
-     * @return array
-     */
-    public function deleteLabel($username, $repository, $label)
-    {
-        return $this->delete('/repos/'.rawurlencode($username).'/'.rawurlencode($repository).'/labels/'.rawurlencode($label));
-    }
+		return $this->post( '/repos/' . rawurlencode( $username ) . '/' . rawurlencode( $repository ) . '/labels', $params );
+	}
 
-    /**
-     * Edit a label for a repository
-     *
-     * @link https://developer.github.com/v3/issues/labels/#update-a-label
-     * @param string $username
-     * @param string $repository
-     * @param string $label
-     * @param string $newName
-     * @param string $color
-     *
-     * @return array
-     */
-    public function update($username, $repository, $label, $newName, $color)
-    {
-        $params = array(
-            'name'  => $newName,
-            'color' => $color,
-        );
+	/**
+	 * Delete a label for a repository.
+	 *
+	 * @link https://developer.github.com/v3/issues/labels/#remove-a-label-from-an-issue
+	 * @param string $username
+	 * @param string $repository
+	 * @param string $label
+	 *
+	 * @return array
+	 */
+	public function deleteLabel( $username, $repository, $label ) {
+		return $this->delete( '/repos/' . rawurlencode( $username ) . '/' . rawurlencode( $repository ) . '/labels/' . rawurlencode( $label ) );
+	}
 
-        return $this->patch('/repos/'.rawurlencode($username).'/'.rawurlencode($repository).'/labels/'.rawurlencode($label), $params);
-    }
+	/**
+	 * Edit a label for a repository
+	 *
+	 * @link https://developer.github.com/v3/issues/labels/#update-a-label
+	 * @param string $username
+	 * @param string $repository
+	 * @param string $label
+	 * @param string $newName
+	 * @param string $color
+	 *
+	 * @return array
+	 */
+	public function update( $username, $repository, $label, $newName, $color ) {
+		$params = array(
+			'name'  => $newName,
+			'color' => $color,
+		);
 
-    /**
-     * Add a label to an issue.
-     *
-     * @link https://developer.github.com/v3/issues/labels/#remove-a-label-from-an-issue
-     * @param string $username
-     * @param string $repository
-     * @param int    $issue
-     * @param string $labels
-     *
-     * @return array
-     *
-     * @thorws \Github\Exception\InvalidArgumentException
-     */
-    public function add($username, $repository, $issue, $labels)
-    {
-        if (is_string($labels)) {
-            $labels = array($labels);
-        } elseif (0 === count($labels)) {
-            throw new InvalidArgumentException();
-        }
+		return $this->patch( '/repos/' . rawurlencode( $username ) . '/' . rawurlencode( $repository ) . '/labels/' . rawurlencode( $label ), $params );
+	}
 
-        return $this->post('/repos/'.rawurlencode($username).'/'.rawurlencode($repository).'/issues/'.rawurlencode($issue).'/labels', $labels);
-    }
+	/**
+	 * Add a label to an issue.
+	 *
+	 * @link https://developer.github.com/v3/issues/labels/#remove-a-label-from-an-issue
+	 * @param string $username
+	 * @param string $repository
+	 * @param int    $issue
+	 * @param string $labels
+	 *
+	 * @return array
+	 *
+	 * @thorws \Github\Exception\InvalidArgumentException
+	 */
+	public function add( $username, $repository, $issue, $labels ) {
+		if ( is_string( $labels ) ) {
+			$labels = array( $labels );
+		} elseif ( 0 === count( $labels ) ) {
+			throw new InvalidArgumentException();
+		}
 
-    /**
-     * Replace labels for an issue.
-     *
-     * @link https://developer.github.com/v3/issues/labels/#replace-all-labels-for-an-issue
-     * @param string $username
-     * @param string $repository
-     * @param int    $issue
-     * @param array  $params
-     *
-     * @return array
-     */
-    public function replace($username, $repository, $issue, array $params)
-    {
-        return $this->put('/repos/'.rawurlencode($username).'/'.rawurlencode($repository).'/issues/'.rawurlencode($issue).'/labels', $params);
-    }
+		return $this->post( '/repos/' . rawurlencode( $username ) . '/' . rawurlencode( $repository ) . '/issues/' . rawurlencode( $issue ) . '/labels', $labels );
+	}
 
-    /**
-     * Remove a label for an issue
-     *
-     * @link https://developer.github.com/v3/issues/labels/#remove-a-label-from-an-issue
-     * @param string $username
-     * @param string $repository
-     * @param string $issue
-     * @param string $label
-     *
-     * @return null
-     */
-    public function remove($username, $repository, $issue, $label)
-    {
-        return $this->delete('/repos/'.rawurlencode($username).'/'.rawurlencode($repository).'/issues/'.rawurlencode($issue).'/labels/'.rawurlencode($label));
-    }
+	/**
+	 * Replace labels for an issue.
+	 *
+	 * @link https://developer.github.com/v3/issues/labels/#replace-all-labels-for-an-issue
+	 * @param string $username
+	 * @param string $repository
+	 * @param int    $issue
+	 * @param array  $params
+	 *
+	 * @return array
+	 */
+	public function replace( $username, $repository, $issue, array $params ) {
+		return $this->put( '/repos/' . rawurlencode( $username ) . '/' . rawurlencode( $repository ) . '/issues/' . rawurlencode( $issue ) . '/labels', $params );
+	}
 
-    /**
-     * Remove all labels from an issue.
-     *
-     * @link https://developer.github.com/v3/issues/labels/#replace-all-labels-for-an-issue
-     * @param string $username
-     * @param string $repository
-     * @param string $issue
-     *
-     * @return null
-     */
-    public function clear($username, $repository, $issue)
-    {
-        return $this->delete('/repos/'.rawurlencode($username).'/'.rawurlencode($repository).'/issues/'.rawurlencode($issue).'/labels');
-    }
+	/**
+	 * Remove a label for an issue
+	 *
+	 * @link https://developer.github.com/v3/issues/labels/#remove-a-label-from-an-issue
+	 * @param string $username
+	 * @param string $repository
+	 * @param string $issue
+	 * @param string $label
+	 *
+	 * @return null
+	 */
+	public function remove( $username, $repository, $issue, $label ) {
+		return $this->delete( '/repos/' . rawurlencode( $username ) . '/' . rawurlencode( $repository ) . '/issues/' . rawurlencode( $issue ) . '/labels/' . rawurlencode( $label ) );
+	}
+
+	/**
+	 * Remove all labels from an issue.
+	 *
+	 * @link https://developer.github.com/v3/issues/labels/#replace-all-labels-for-an-issue
+	 * @param string $username
+	 * @param string $repository
+	 * @param string $issue
+	 *
+	 * @return null
+	 */
+	public function clear( $username, $repository, $issue ) {
+		return $this->delete( '/repos/' . rawurlencode( $username ) . '/' . rawurlencode( $repository ) . '/issues/' . rawurlencode( $issue ) . '/labels' );
+	}
 }

@@ -10,206 +10,194 @@ use Github\HttpClient\Message\ResponseMediator;
  *
  * @author Joseph Bielawski <stloyd@gmail.com>
  */
-abstract class AbstractApi implements ApiInterface
-{
-    /**
-     * The client.
-     *
-     * @var Client
-     */
-    protected $client;
+abstract class AbstractApi implements ApiInterface {
 
-    /**
-     * Number of items per page (GitHub pagination).
-     *
-     * @var null|int
-     */
-    protected $perPage;
+	/**
+	 * The client.
+	 *
+	 * @var Client
+	 */
+	protected $client;
 
-    /**
-     * @param Client $client
-     */
-    public function __construct(Client $client)
-    {
-        $this->client = $client;
-    }
+	/**
+	 * Number of items per page (GitHub pagination).
+	 *
+	 * @var null|int
+	 */
+	protected $perPage;
 
-    public function configure()
-    {
-    }
+	/**
+	 * @param Client $client
+	 */
+	public function __construct( Client $client ) {
+		$this->client = $client;
+	}
 
-    /**
-     * @return null|int
-     */
-    public function getPerPage()
-    {
-        return $this->perPage;
-    }
+	public function configure() {
+	}
 
-    /**
-     * @param null|int $perPage
-     */
-    public function setPerPage($perPage)
-    {
-        $this->perPage = (null === $perPage ? $perPage : (int) $perPage);
+	/**
+	 * @return null|int
+	 */
+	public function getPerPage() {
+		return $this->perPage;
+	}
 
-        return $this;
-    }
+	/**
+	 * @param null|int $perPage
+	 */
+	public function setPerPage( $perPage ) {
+		$this->perPage = (null === $perPage ? $perPage : (int) $perPage);
 
-    /**
-     * Send a GET request with query parameters.
-     *
-     * @param string $path           Request path.
-     * @param array  $parameters     GET parameters.
-     * @param array  $requestHeaders Request Headers.
-     *
-     * @return array|string
-     */
-    protected function get($path, array $parameters = array(), array $requestHeaders = array())
-    {
-        if (null !== $this->perPage && !isset($parameters['per_page'])) {
-            $parameters['per_page'] = $this->perPage;
-        }
-        if (array_key_exists('ref', $parameters) && is_null($parameters['ref'])) {
-            unset($parameters['ref']);
-        }
+		return $this;
+	}
 
-        if (count($parameters) > 0) {
-            $path .= '?'.http_build_query($parameters);
-        }
+	/**
+	 * Send a GET request with query parameters.
+	 *
+	 * @param string $path           Request path.
+	 * @param array  $parameters     GET parameters.
+	 * @param array  $requestHeaders Request Headers.
+	 *
+	 * @return array|string
+	 */
+	protected function get( $path, array $parameters = array(), array $requestHeaders = array() ) {
+		if ( null !== $this->perPage && ! isset( $parameters['per_page'] ) ) {
+			$parameters['per_page'] = $this->perPage;
+		}
+		if ( array_key_exists( 'ref', $parameters ) && is_null( $parameters['ref'] ) ) {
+			unset( $parameters['ref'] );
+		}
 
-        $response = $this->client->getHttpClient()->get($path, $requestHeaders);
+		if ( count( $parameters ) > 0 ) {
+			$path .= '?' . http_build_query( $parameters );
+		}
 
-        return ResponseMediator::getContent($response);
-    }
+		$response = $this->client->getHttpClient()->get( $path, $requestHeaders );
 
-    /**
-     * Send a HEAD request with query parameters.
-     *
-     * @param string $path           Request path.
-     * @param array  $parameters     HEAD parameters.
-     * @param array  $requestHeaders Request headers.
-     *
-     * @return \Psr\Http\Message\ResponseInterface
-     */
-    protected function head($path, array $parameters = array(), array $requestHeaders = array())
-    {
-        if (array_key_exists('ref', $parameters) && is_null($parameters['ref'])) {
-            unset($parameters['ref']);
-        }
+		return ResponseMediator::getContent( $response );
+	}
 
-        $response = $this->client->getHttpClient()->head($path.'?'.http_build_query($parameters), $requestHeaders);
+	/**
+	 * Send a HEAD request with query parameters.
+	 *
+	 * @param string $path           Request path.
+	 * @param array  $parameters     HEAD parameters.
+	 * @param array  $requestHeaders Request headers.
+	 *
+	 * @return \Psr\Http\Message\ResponseInterface
+	 */
+	protected function head( $path, array $parameters = array(), array $requestHeaders = array() ) {
+		if ( array_key_exists( 'ref', $parameters ) && is_null( $parameters['ref'] ) ) {
+			unset( $parameters['ref'] );
+		}
 
-        return $response;
-    }
+		$response = $this->client->getHttpClient()->head( $path . '?' . http_build_query( $parameters ), $requestHeaders );
 
-    /**
-     * Send a POST request with JSON-encoded parameters.
-     *
-     * @param string $path           Request path.
-     * @param array  $parameters     POST parameters to be JSON encoded.
-     * @param array  $requestHeaders Request headers.
-     *
-     * @return array|string
-     */
-    protected function post($path, array $parameters = array(), array $requestHeaders = array())
-    {
-        return $this->postRaw(
-            $path,
-            $this->createJsonBody($parameters),
-            $requestHeaders
-        );
-    }
+		return $response;
+	}
 
-    /**
-     * Send a POST request with raw data.
-     *
-     * @param string $path           Request path.
-     * @param string $body           Request body.
-     * @param array  $requestHeaders Request headers.
-     *
-     * @return array|string
-     */
-    protected function postRaw($path, $body, array $requestHeaders = array())
-    {
-        $response = $this->client->getHttpClient()->post(
-            $path,
-            $requestHeaders,
-            $body
-        );
+	/**
+	 * Send a POST request with JSON-encoded parameters.
+	 *
+	 * @param string $path           Request path.
+	 * @param array  $parameters     POST parameters to be JSON encoded.
+	 * @param array  $requestHeaders Request headers.
+	 *
+	 * @return array|string
+	 */
+	protected function post( $path, array $parameters = array(), array $requestHeaders = array() ) {
+		return $this->postRaw(
+			$path,
+			$this->createJsonBody( $parameters ),
+			$requestHeaders
+		);
+	}
 
-        return ResponseMediator::getContent($response);
-    }
+	/**
+	 * Send a POST request with raw data.
+	 *
+	 * @param string $path           Request path.
+	 * @param string $body           Request body.
+	 * @param array  $requestHeaders Request headers.
+	 *
+	 * @return array|string
+	 */
+	protected function postRaw( $path, $body, array $requestHeaders = array() ) {
+		$response = $this->client->getHttpClient()->post(
+			$path,
+			$requestHeaders,
+			$body
+		);
 
-    /**
-     * Send a PATCH request with JSON-encoded parameters.
-     *
-     * @param string $path           Request path.
-     * @param array  $parameters     POST parameters to be JSON encoded.
-     * @param array  $requestHeaders Request headers.
-     *
-     * @return array|string
-     */
-    protected function patch($path, array $parameters = array(), array $requestHeaders = array())
-    {
-        $response = $this->client->getHttpClient()->patch(
-            $path,
-            $requestHeaders,
-            $this->createJsonBody($parameters)
-        );
+		return ResponseMediator::getContent( $response );
+	}
 
-        return ResponseMediator::getContent($response);
-    }
+	/**
+	 * Send a PATCH request with JSON-encoded parameters.
+	 *
+	 * @param string $path           Request path.
+	 * @param array  $parameters     POST parameters to be JSON encoded.
+	 * @param array  $requestHeaders Request headers.
+	 *
+	 * @return array|string
+	 */
+	protected function patch( $path, array $parameters = array(), array $requestHeaders = array() ) {
+		$response = $this->client->getHttpClient()->patch(
+			$path,
+			$requestHeaders,
+			$this->createJsonBody( $parameters )
+		);
 
-    /**
-     * Send a PUT request with JSON-encoded parameters.
-     *
-     * @param string $path           Request path.
-     * @param array  $parameters     POST parameters to be JSON encoded.
-     * @param array  $requestHeaders Request headers.
-     *
-     * @return array|string
-     */
-    protected function put($path, array $parameters = array(), array $requestHeaders = array())
-    {
-        $response = $this->client->getHttpClient()->put(
-            $path,
-            $requestHeaders,
-            $this->createJsonBody($parameters)
-        );
+		return ResponseMediator::getContent( $response );
+	}
 
-        return ResponseMediator::getContent($response);
-    }
+	/**
+	 * Send a PUT request with JSON-encoded parameters.
+	 *
+	 * @param string $path           Request path.
+	 * @param array  $parameters     POST parameters to be JSON encoded.
+	 * @param array  $requestHeaders Request headers.
+	 *
+	 * @return array|string
+	 */
+	protected function put( $path, array $parameters = array(), array $requestHeaders = array() ) {
+		$response = $this->client->getHttpClient()->put(
+			$path,
+			$requestHeaders,
+			$this->createJsonBody( $parameters )
+		);
 
-    /**
-     * Send a DELETE request with JSON-encoded parameters.
-     *
-     * @param string $path           Request path.
-     * @param array  $parameters     POST parameters to be JSON encoded.
-     * @param array  $requestHeaders Request headers.
-     *
-     * @return array|string
-     */
-    protected function delete($path, array $parameters = array(), array $requestHeaders = array())
-    {
-        $response = $this->client->getHttpClient()->delete(
-            $path,
-            $requestHeaders,
-            $this->createJsonBody($parameters)
-        );
+		return ResponseMediator::getContent( $response );
+	}
 
-        return ResponseMediator::getContent($response);
-    }
+	/**
+	 * Send a DELETE request with JSON-encoded parameters.
+	 *
+	 * @param string $path           Request path.
+	 * @param array  $parameters     POST parameters to be JSON encoded.
+	 * @param array  $requestHeaders Request headers.
+	 *
+	 * @return array|string
+	 */
+	protected function delete( $path, array $parameters = array(), array $requestHeaders = array() ) {
+		$response = $this->client->getHttpClient()->delete(
+			$path,
+			$requestHeaders,
+			$this->createJsonBody( $parameters )
+		);
 
-    /**
-     * Create a JSON encoded version of an array of parameters.
-     *
-     * @param array $parameters Request parameters
-     *
-     * @return null|string
-     */
-    protected function createJsonBody(array $parameters)
-    {
-        return (count($parameters) === 0) ? null : json_encode($parameters, empty($parameters) ? JSON_FORCE_OBJECT : 0);
-    }
+		return ResponseMediator::getContent( $response );
+	}
+
+	/**
+	 * Create a JSON encoded version of an array of parameters.
+	 *
+	 * @param array $parameters Request parameters
+	 *
+	 * @return null|string
+	 */
+	protected function createJsonBody( array $parameters ) {
+		return (count( $parameters ) === 0) ? null : json_encode( $parameters, empty( $parameters ) ? JSON_FORCE_OBJECT : 0 );
+	}
 }

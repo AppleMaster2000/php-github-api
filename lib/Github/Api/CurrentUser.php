@@ -15,178 +15,185 @@ use Github\Api\CurrentUser\Starring;
  * @author Joseph Bielawski <stloyd@gmail.com>
  * @author Felipe Valtl de Mello <eu@felipe.im>
  */
-class CurrentUser extends AbstractApi
-{
-    public function show()
-    {
-        return $this->get('/user');
-    }
+class CurrentUser extends AbstractApi {
 
-    public function update(array $params)
-    {
-        return $this->patch('/user', $params);
-    }
+	public function show() {
+		return $this->get( '/user' );
+	}
 
-    /**
-     * @return Emails
-     */
-    public function emails()
-    {
-        return new Emails($this->client);
-    }
+	public function update( array $params ) {
+		return $this->patch( '/user', $params );
+	}
 
-    /**
-     * @return Followers
-     */
-    public function follow()
-    {
-        return new Followers($this->client);
-    }
+	/**
+	 * @return Emails
+	 */
+	public function emails() {
+		return new Emails( $this->client );
+	}
 
-    public function followers($page = 1)
-    {
-        return $this->get('/user/followers', array(
-            'page' => $page
-        ));
-    }
+	/**
+	 * @return Followers
+	 */
+	public function follow() {
+		return new Followers( $this->client );
+	}
 
-    /**
-     * @link http://developer.github.com/v3/issues/#list-issues
-     *
-     * @param array $params
-     * @param bool  $includeOrgIssues
-     *
-     * @return array
-     */
-    public function issues(array $params = array(), $includeOrgIssues = true)
-    {
-        return $this->get($includeOrgIssues ? '/issues' : '/user/issues', array_merge(array('page' => 1), $params));
-    }
+	public function followers( $page = 1 ) {
+		return $this->get(
+			'/user/followers', array(
+				'page' => $page,
+			)
+		);
+	}
 
-    /**
-     * @return PublicKeys
-     */
-    public function keys()
-    {
-        return new PublicKeys($this->client);
-    }
+	/**
+	 * @link http://developer.github.com/v3/issues/#list-issues
+	 *
+	 * @param array $params
+	 * @param bool  $includeOrgIssues
+	 *
+	 * @return array
+	 */
+	public function issues( array $params = array(), $includeOrgIssues = true ) {
+		return $this->get(
+			$includeOrgIssues ? '/issues' : '/user/issues', array_merge(
+				array(
+					'page' => 1,
+				), $params
+			)
+		);
+	}
 
-    /**
-     * @return Notifications
-     */
-    public function notifications()
-    {
-        return new Notifications($this->client);
-    }
+	/**
+	 * @return PublicKeys
+	 */
+	public function keys() {
+		return new PublicKeys( $this->client );
+	}
 
-    /**
-     * @return Memberships
-     */
-    public function memberships()
-    {
-        return new Memberships($this->client);
-    }
+	/**
+	 * @return Notifications
+	 */
+	public function notifications() {
+		return new Notifications( $this->client );
+	}
 
-    /**
-     * @link http://developer.github.com/v3/orgs/#list-user-organizations
-     *
-     * @return array
-     */
-    public function organizations()
-    {
-        return $this->get('/user/orgs');
-    }
+	/**
+	 * @return Memberships
+	 */
+	public function memberships() {
+		return new Memberships( $this->client );
+	}
 
-    /**
-     * @link https://developer.github.com/v3/orgs/teams/#list-user-teams
-     *
-     * @return array
-     */
-    public function teams()
-    {
-        return $this->get('/user/teams');
-    }
+	/**
+	 * @link http://developer.github.com/v3/orgs/#list-user-organizations
+	 *
+	 * @return array
+	 */
+	public function organizations() {
+		return $this->get( '/user/orgs' );
+	}
 
-    /**
-     * @link http://developer.github.com/v3/repos/#list-your-repositories
-     *
-     * @param string $type      role in the repository
-     * @param string $sort      sort by
-     * @param string $direction direction of sort, asc or desc
-     *
-     * @return array
-     */
-    public function repositories($type = 'owner', $sort = 'full_name', $direction = 'asc')
-    {
-        return $this->get('/user/repos', array(
-            'type' => $type,
-            'sort' => $sort,
-            'direction' => $direction
-        ));
-    }
+	/**
+	 * @link https://developer.github.com/v3/orgs/teams/#list-user-teams
+	 *
+	 * @return array
+	 */
+	public function teams() {
+		return $this->get( '/user/teams' );
+	}
 
-    /**
-     * @return Watchers
-     */
-    public function watchers()
-    {
-        return new Watchers($this->client);
-    }
+	/**
+	 * @link http://developer.github.com/v3/repos/#list-your-repositories
+	 *
+	 * @param string $type      role in the repository
+	 * @param string $sort      sort by
+	 * @param string $direction direction of sort, asc or desc
+	 *
+	 * @return array
+	 */
+	public function repositories( $type = 'owner', $sort = 'full_name', $direction = 'asc' ) {
+		return $this->get(
+			'/user/repos', array(
+				'type' => $type,
+				'sort' => $sort,
+				'direction' => $direction,
+			)
+		);
+	}
 
-    /**
-     * @deprecated Use watchers() instead
-     */
-    public function watched($page = 1)
-    {
-        return $this->get('/user/watched', array(
-            'page' => $page
-        ));
-    }
+	/**
+	 * @return Watchers
+	 */
+	public function watchers() {
+		return new Watchers( $this->client );
+	}
 
-    /**
-     * @return Starring
-     */
-    public function starring()
-    {
-        return new Starring($this->client);
-    }
+	/**
+	 * @deprecated Use watchers() instead
+	 */
+	public function watched( $page = 1 ) {
+		return $this->get(
+			'/user/watched', array(
+				'page' => $page,
+			)
+		);
+	}
 
-    /**
-     * @deprecated Use starring() instead
-     */
-    public function starred($page = 1)
-    {
-        return $this->get('/user/starred', array(
-            'page' => $page
-        ));
-    }
+	/**
+	 * @return Starring
+	 */
+	public function starring() {
+		return new Starring( $this->client );
+	}
 
-    /**
-     *  @link https://developer.github.com/v3/activity/watching/#list-repositories-being-watched
-     */
-    public function subscriptions()
-    {
-        return $this->get('/user/subscriptions');
-    }
+	/**
+	 * @deprecated Use starring() instead
+	 */
+	public function starred( $page = 1 ) {
+		return $this->get(
+			'/user/starred', array(
+				'page' => $page,
+			)
+		);
+	}
 
-    /**
-     * @link https://developer.github.com/v3/integrations/#list-installations-for-user
-     *
-     * @param array $params
-     */
-    public function installations(array $params = array())
-    {
-        return $this->get('/user/installations', array_merge(array('page' => 1), $params));
-    }
+	/**
+	 *  @link https://developer.github.com/v3/activity/watching/#list-repositories-being-watched
+	 */
+	public function subscriptions() {
+		return $this->get( '/user/subscriptions' );
+	}
 
-    /**
-     * @link https://developer.github.com/v3/integrations/installations/#list-repositories-accessible-to-the-user-for-an-installation
-     *
-     * @param string $installationId  the ID of the Installation
-     * @param array $params
-     */
-    public function repositoriesByInstallation($installationId, array $params = array())
-    {
-        return $this->get(sprintf('/user/installations/%s/repositories', $installationId), array_merge(array('page' => 1), $params));
-    }
+	/**
+	 * @link https://developer.github.com/v3/integrations/#list-installations-for-user
+	 *
+	 * @param array $params
+	 */
+	public function installations( array $params = array() ) {
+		return $this->get(
+			'/user/installations', array_merge(
+				array(
+					'page' => 1,
+				), $params
+			)
+		);
+	}
+
+	/**
+	 * @link https://developer.github.com/v3/integrations/installations/#list-repositories-accessible-to-the-user-for-an-installation
+	 *
+	 * @param string $installationId  the ID of the Installation
+	 * @param array  $params
+	 */
+	public function repositoriesByInstallation( $installationId, array $params = array() ) {
+		return $this->get(
+			sprintf( '/user/installations/%s/repositories', $installationId ), array_merge(
+				array(
+					'page' => 1,
+				), $params
+			)
+		);
+	}
 }

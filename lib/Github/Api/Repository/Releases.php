@@ -10,117 +10,109 @@ use Github\Exception\MissingArgumentException;
  * @author Matthew Simo <matthew.a.simo@gmail.com>
  * @author Evgeniy Guseletov <d46k16@gmail.com>
  */
-class Releases extends AbstractApi
-{
-    /**
-     * Get the latest release.
-     *
-     * @param $username
-     * @param $repository
-     *
-     * @return array
-     */
-    public function latest($username, $repository)
-    {
-        return $this->get('/repos/'.rawurlencode($username).'/'.rawurlencode($repository).'/releases/latest');
-    }
+class Releases extends AbstractApi {
 
-    /**
-     * List releases for a tag.
-     *
-     * @param $username
-     * @param $repository
-     * @param $tag
-     *
-     * @return array
-     */
-    public function tag($username, $repository, $tag)
-    {
-        return $this->get('/repos/'.rawurlencode($username).'/'.rawurlencode($repository).'/releases/tags/'.rawurlencode($tag));
-    }
+	/**
+	 * Get the latest release.
+	 *
+	 * @param $username
+	 * @param $repository
+	 *
+	 * @return array
+	 */
+	public function latest( $username, $repository ) {
+		return $this->get( '/repos/' . rawurlencode( $username ) . '/' . rawurlencode( $repository ) . '/releases/latest' );
+	}
 
-    /**
-     * List releases in selected repository.
-     *
-     * @param string $username   the user who owns the repo
-     * @param string $repository the name of the repo
-     * @param array  $params     the additional parameters like milestone, assignees, labels, sort, direction
-     *
-     * @return array
-     */
-    public function all($username, $repository, array $params = [])
-    {
-        return $this->get('/repos/'.rawurlencode($username).'/'.rawurlencode($repository).'/releases', $params);
-    }
+	/**
+	 * List releases for a tag.
+	 *
+	 * @param $username
+	 * @param $repository
+	 * @param $tag
+	 *
+	 * @return array
+	 */
+	public function tag( $username, $repository, $tag ) {
+		return $this->get( '/repos/' . rawurlencode( $username ) . '/' . rawurlencode( $repository ) . '/releases/tags/' . rawurlencode( $tag ) );
+	}
 
-    /**
-     * Get a release in selected repository.
-     *
-     * @param string $username   the user who owns the repo
-     * @param string $repository the name of the repo
-     * @param int    $id         the id of the release
-     *
-     * @return array
-     */
-    public function show($username, $repository, $id)
-    {
-        return $this->get('/repos/'.rawurlencode($username).'/'.rawurlencode($repository).'/releases/'.rawurlencode($id));
-    }
+	/**
+	 * List releases in selected repository.
+	 *
+	 * @param string $username   the user who owns the repo
+	 * @param string $repository the name of the repo
+	 * @param array  $params     the additional parameters like milestone, assignees, labels, sort, direction
+	 *
+	 * @return array
+	 */
+	public function all( $username, $repository, array $params = [] ) {
+		return $this->get( '/repos/' . rawurlencode( $username ) . '/' . rawurlencode( $repository ) . '/releases', $params );
+	}
 
-    /**
-     * Create new release in selected repository.
-     *
-     * @param string $username
-     * @param string $repository
-     * @param array  $params
-     *
-     * @throws MissingArgumentException
-     *
-     * @return array
-     */
-    public function create($username, $repository, array $params)
-    {
-        if (!isset($params['tag_name'])) {
-            throw new MissingArgumentException('tag_name');
-        }
+	/**
+	 * Get a release in selected repository.
+	 *
+	 * @param string $username   the user who owns the repo
+	 * @param string $repository the name of the repo
+	 * @param int    $id         the id of the release
+	 *
+	 * @return array
+	 */
+	public function show( $username, $repository, $id ) {
+		return $this->get( '/repos/' . rawurlencode( $username ) . '/' . rawurlencode( $repository ) . '/releases/' . rawurlencode( $id ) );
+	}
 
-        return $this->post('/repos/'.rawurlencode($username).'/'.rawurlencode($repository).'/releases', $params);
-    }
+	/**
+	 * Create new release in selected repository.
+	 *
+	 * @param string $username
+	 * @param string $repository
+	 * @param array  $params
+	 *
+	 * @throws MissingArgumentException
+	 *
+	 * @return array
+	 */
+	public function create( $username, $repository, array $params ) {
+		if ( ! isset( $params['tag_name'] ) ) {
+			throw new MissingArgumentException( 'tag_name' );
+		}
 
-    /**
-     * Edit release in selected repository.
-     *
-     * @param string $username
-     * @param string $repository
-     * @param int    $id
-     * @param array  $params
-     *
-     * @return array
-     */
-    public function edit($username, $repository, $id, array $params)
-    {
-        return $this->patch('/repos/'.rawurlencode($username).'/'.rawurlencode($repository).'/releases/'.rawurlencode($id), $params);
-    }
+		return $this->post( '/repos/' . rawurlencode( $username ) . '/' . rawurlencode( $repository ) . '/releases', $params );
+	}
 
-    /**
-     * Delete a release in selected repository (Not thoroughly tested!).
-     *
-     * @param string $username   the user who owns the repo
-     * @param string $repository the name of the repo
-     * @param int    $id         the id of the release
-     *
-     * @return array
-     */
-    public function remove($username, $repository, $id)
-    {
-        return $this->delete('/repos/'.rawurlencode($username).'/'.rawurlencode($repository).'/releases/'.rawurlencode($id));
-    }
+	/**
+	 * Edit release in selected repository.
+	 *
+	 * @param string $username
+	 * @param string $repository
+	 * @param int    $id
+	 * @param array  $params
+	 *
+	 * @return array
+	 */
+	public function edit( $username, $repository, $id, array $params ) {
+		return $this->patch( '/repos/' . rawurlencode( $username ) . '/' . rawurlencode( $repository ) . '/releases/' . rawurlencode( $id ), $params );
+	}
 
-    /**
-     * @return Assets
-     */
-    public function assets()
-    {
-        return new Assets($this->client);
-    }
+	/**
+	 * Delete a release in selected repository (Not thoroughly tested!).
+	 *
+	 * @param string $username   the user who owns the repo
+	 * @param string $repository the name of the repo
+	 * @param int    $id         the id of the release
+	 *
+	 * @return array
+	 */
+	public function remove( $username, $repository, $id ) {
+		return $this->delete( '/repos/' . rawurlencode( $username ) . '/' . rawurlencode( $repository ) . '/releases/' . rawurlencode( $id ) );
+	}
+
+	/**
+	 * @return Assets
+	 */
+	public function assets() {
+		return new Assets( $this->client );
+	}
 }

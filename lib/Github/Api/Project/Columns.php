@@ -6,68 +6,66 @@ use Github\Api\AbstractApi;
 use Github\Api\AcceptHeaderTrait;
 use Github\Exception\MissingArgumentException;
 
-class Columns extends AbstractApi
-{
-    use AcceptHeaderTrait;
+class Columns extends AbstractApi {
 
-    /**
-     * Configure the accept header for Early Access to the projects api
-     *
-     * @see https://developer.github.com/v3/repos/projects/#projects
-     *
-     * return self
-     */
-    public function configure()
-    {
-        $this->acceptHeaderValue = 'application/vnd.github.inertia-preview+json';
+	use AcceptHeaderTrait;
 
-        return $this;
-    }
+	/**
+	 * Configure the accept header for Early Access to the projects api
+	 *
+	 * @see https://developer.github.com/v3/repos/projects/#projects
+	 *
+	 * return self
+	 */
+	public function configure() {
+		$this->acceptHeaderValue = 'application/vnd.github.inertia-preview+json';
 
-    public function all($projectId, array $params = array())
-    {
-        return $this->get('/projects/' . rawurlencode($projectId) . '/columns', array_merge(array('page' => 1), $params));
-    }
+		return $this;
+	}
 
-    public function show($id)
-    {
-        return $this->get('/projects/columns/'.rawurlencode($id));
-    }
+	public function all( $projectId, array $params = array() ) {
+		return $this->get(
+			'/projects/' . rawurlencode( $projectId ) . '/columns', array_merge(
+				array(
+					'page' => 1,
+				), $params
+			)
+		);
+	}
 
-    public function create($projectId, array $params)
-    {
-        if (!isset($params['name'])) {
-            throw new MissingArgumentException(array('name'));
-        }
+	public function show( $id ) {
+		return $this->get( '/projects/columns/' . rawurlencode( $id ) );
+	}
 
-        return $this->post('/projects/' . rawurlencode($projectId) . '/columns', $params);
-    }
+	public function create( $projectId, array $params ) {
+		if ( ! isset( $params['name'] ) ) {
+			throw new MissingArgumentException( array( 'name' ) );
+		}
 
-    public function update($id, array $params)
-    {
-        if (!isset($params['name'])) {
-            throw new MissingArgumentException(array('name'));
-        }
+		return $this->post( '/projects/' . rawurlencode( $projectId ) . '/columns', $params );
+	}
 
-        return $this->patch('/projects/columns/' . rawurlencode($id), $params);
-    }
+	public function update( $id, array $params ) {
+		if ( ! isset( $params['name'] ) ) {
+			throw new MissingArgumentException( array( 'name' ) );
+		}
 
-    public function deleteColumn($id)
-    {
-        return $this->delete('/projects/columns/'.rawurlencode($id));
-    }
+		return $this->patch( '/projects/columns/' . rawurlencode( $id ), $params );
+	}
 
-    public function move($id, array $params)
-    {
-        if (!isset($params['position'])) {
-            throw new MissingArgumentException(array('position'));
-        }
+	public function deleteColumn( $id ) {
+		return $this->delete( '/projects/columns/' . rawurlencode( $id ) );
+	}
 
-        return $this->post('/projects/columns/' . rawurlencode($id) . '/moves', $params);
-    }
+	public function move( $id, array $params ) {
+		if ( ! isset( $params['position'] ) ) {
+			throw new MissingArgumentException( array( 'position' ) );
+		}
 
-    public function cards()
-    {
-        return new Cards($this->client);
-    }
+		return $this->post( '/projects/columns/' . rawurlencode( $id ) . '/moves', $params );
+	}
+
+	public function cards() {
+		return new Cards( $this->client );
+	}
 }

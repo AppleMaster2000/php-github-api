@@ -12,181 +12,167 @@ use Github\HttpClient\Message\ResponseMediator;
  * @author Ramon de la Fuente <ramon@future500.nl>
  * @author Mitchel Verschoof <mitchel@future500.nl>
  */
-class ResultPager implements ResultPagerInterface
-{
-    /**
-     * The GitHub Client to use for pagination.
-     *
-     * @var \Github\Client
-     */
-    protected $client;
+class ResultPager implements ResultPagerInterface {
 
-    /**
-     * Comes from pagination headers in Github API results.
-     *
-     * @var array
-     */
-    protected $pagination;
+	/**
+	 * The GitHub Client to use for pagination.
+	 *
+	 * @var \Github\Client
+	 */
+	protected $client;
 
-    /**
-     * The Github client to use for pagination.
-     *
-     * This must be the same instance that you got the Api instance from.
-     *
-     * Example code:
-     *
-     * $client = new \Github\Client();
-     * $api = $client->api('someApi');
-     * $pager = new \Github\ResultPager($client);
-     *
-     * @param \Github\Client $client
-     */
-    public function __construct(Client $client)
-    {
-        $this->client = $client;
-    }
+	/**
+	 * Comes from pagination headers in Github API results.
+	 *
+	 * @var array
+	 */
+	protected $pagination;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getPagination()
-    {
-        return $this->pagination;
-    }
+	/**
+	 * The Github client to use for pagination.
+	 *
+	 * This must be the same instance that you got the Api instance from.
+	 *
+	 * Example code:
+	 *
+	 * $client = new \Github\Client();
+	 * $api = $client->api('someApi');
+	 * $pager = new \Github\ResultPager($client);
+	 *
+	 * @param \Github\Client $client
+	 */
+	public function __construct( Client $client ) {
+		$this->client = $client;
+	}
 
-    /**
-     * {@inheritdoc}
-     */
-    public function fetch(ApiInterface $api, $method, array $parameters = array())
-    {
-        $result = $this->callApi($api, $method, $parameters);
-        $this->postFetch();
+	/**
+	 * {@inheritdoc}
+	 */
+	public function getPagination() {
+		return $this->pagination;
+	}
 
-        return $result;
-    }
+	/**
+	 * {@inheritdoc}
+	 */
+	public function fetch( ApiInterface $api, $method, array $parameters = array() ) {
+		$result = $this->callApi( $api, $method, $parameters );
+		$this->postFetch();
 
-    /**
-     * {@inheritdoc}
-     */
-    public function fetchAll(ApiInterface $api, $method, array $parameters = array())
-    {
-        $isSearch = $api instanceof Search;
+		return $result;
+	}
 
-        // get the perPage from the api
-        $perPage = $api->getPerPage();
+	/**
+	 * {@inheritdoc}
+	 */
+	public function fetchAll( ApiInterface $api, $method, array $parameters = array() ) {
+		$isSearch = $api instanceof Search;
 
-        // set parameters per_page to GitHub max to minimize number of requests
-        $api->setPerPage(100);
+		// get the perPage from the api
+		$perPage = $api->getPerPage();
 
-        $result = $this->callApi($api, $method, $parameters);
-        $this->postFetch();
+		// set parameters per_page to GitHub max to minimize number of requests
+		$api->setPerPage( 100 );
 
-        if ($isSearch) {
-            $result = isset($result['items']) ? $result['items'] : $result;
-        }
+		$result = $this->callApi( $api, $method, $parameters );
+		$this->postFetch();
 
-        while ($this->hasNext()) {
-            $next = $this->fetchNext();
+		if ( $isSearch ) {
+			$result = isset( $result['items'] ) ? $result['items'] : $result;
+		}
 
-            if ($isSearch) {
-                $result = array_merge($result, $next['items']);
-            } else {
-                $result = array_merge($result, $next);
-            }
-        }
+		while ( $this->hasNext() ) {
+			$next = $this->fetchNext();
 
-        // restore the perPage
-        $api->setPerPage($perPage);
+			if ( $isSearch ) {
+				$result = array_merge( $result, $next['items'] );
+			} else {
+				$result = array_merge( $result, $next );
+			}
+		}
 
-        return $result;
-    }
+		// restore the perPage
+		$api->setPerPage( $perPage );
 
-    /**
-     * {@inheritdoc}
-     */
-    public function postFetch()
-    {
-        $this->pagination = ResponseMediator::getPagination($this->client->getLastResponse());
-    }
+		return $result;
+	}
 
-    /**
-     * {@inheritdoc}
-     */
-    public function hasNext()
-    {
-        return $this->has('next');
-    }
+	/**
+	 * {@inheritdoc}
+	 */
+	public function postFetch() {
+		$this->pagination = ResponseMediator::getPagination( $this->client->getLastResponse() );
+	}
 
-    /**
-     * {@inheritdoc}
-     */
-    public function fetchNext()
-    {
-        return $this->get('next');
-    }
+	/**
+	 * {@inheritdoc}
+	 */
+	public function hasNext() {
+		return $this->has( 'next' );
+	}
 
-    /**
-     * {@inheritdoc}
-     */
-    public function hasPrevious()
-    {
-        return $this->has('prev');
-    }
+	/**
+	 * {@inheritdoc}
+	 */
+	public function fetchNext() {
+		return $this->get( 'next' );
+	}
 
-    /**
-     * {@inheritdoc}
-     */
-    public function fetchPrevious()
-    {
-        return $this->get('prev');
-    }
+	/**
+	 * {@inheritdoc}
+	 */
+	public function hasPrevious() {
+		return $this->has( 'prev' );
+	}
 
-    /**
-     * {@inheritdoc}
-     */
-    public function fetchFirst()
-    {
-        return $this->get('first');
-    }
+	/**
+	 * {@inheritdoc}
+	 */
+	public function fetchPrevious() {
+		return $this->get( 'prev' );
+	}
 
-    /**
-     * {@inheritdoc}
-     */
-    public function fetchLast()
-    {
-        return $this->get('last');
-    }
+	/**
+	 * {@inheritdoc}
+	 */
+	public function fetchFirst() {
+		return $this->get( 'first' );
+	}
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function has($key)
-    {
-        return !empty($this->pagination) && isset($this->pagination[$key]);
-    }
+	/**
+	 * {@inheritdoc}
+	 */
+	public function fetchLast() {
+		return $this->get( 'last' );
+	}
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function get($key)
-    {
-        if ($this->has($key)) {
-            $result = $this->client->getHttpClient()->get($this->pagination[$key]);
-            $this->postFetch();
+	/**
+	 * {@inheritdoc}
+	 */
+	protected function has( $key ) {
+		return ! empty( $this->pagination ) && isset( $this->pagination[ $key ] );
+	}
 
-            return ResponseMediator::getContent($result);
-        }
-    }
+	/**
+	 * {@inheritdoc}
+	 */
+	protected function get( $key ) {
+		if ( $this->has( $key ) ) {
+			$result = $this->client->getHttpClient()->get( $this->pagination[ $key ] );
+			$this->postFetch();
 
-    /**
-     * @param ApiInterface $api
-     * @param $method
-     * @param array $parameters
-     *
-     * @return mixed
-     */
-    protected function callApi(ApiInterface $api, $method, array $parameters)
-    {
-        return call_user_func_array(array($api, $method), $parameters);
-    }
+			return ResponseMediator::getContent( $result );
+		}
+	}
+
+	/**
+	 * @param ApiInterface $api
+	 * @param $method
+	 * @param array        $parameters
+	 *
+	 * @return mixed
+	 */
+	protected function callApi( ApiInterface $api, $method, array $parameters ) {
+		return call_user_func_array( array( $api, $method ), $parameters );
+	}
 }

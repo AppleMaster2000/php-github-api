@@ -12,74 +12,74 @@ use Psr\Http\Message\RequestInterface;
  *
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
-class Authentication implements Plugin
-{
-    private $tokenOrLogin;
-    private $password;
-    private $method;
+class Authentication{
 
-    public function __construct($tokenOrLogin, $password = null, $method)
-    {
-        $this->tokenOrLogin = $tokenOrLogin;
-        $this->password = $password;
-        $this->method = $method;
-    }
+	private $tokenOrLogin;
+	private $password;
+	private $method;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function handleRequest(RequestInterface $request, callable $next, callable $first)
-    {
-        switch ($this->method) {
-            case Client::AUTH_HTTP_PASSWORD:
-                $request = $request->withHeader(
-                    'Authorization',
-                    sprintf('Basic %s', base64_encode($this->tokenOrLogin.':'.$this->password))
-                );
-                break;
+	public function __construct( $tokenOrLogin, $password = null, $method ) {
+		$this->tokenOrLogin = $tokenOrLogin;
+		$this->password = $password;
+		$this->method = $method;
+	}
 
-            case Client::AUTH_HTTP_TOKEN:
-                $request = $request->withHeader('Authorization', sprintf('token %s', $this->tokenOrLogin));
-                break;
+	/**
+	 * {@inheritdoc}
+	 */
+	public function handleRequest( RequestInterface $request, callable $next, callable $first ) {
+		switch ( $this->method ) {
+			case Client::AUTH_HTTP_PASSWORD:
+				$request = $request->withHeader(
+					'Authorization',
+					sprintf( 'Basic %s', base64_encode( $this->tokenOrLogin . ':' . $this->password ) )
+				);
+				break;
 
-            case Client::AUTH_URL_CLIENT_ID:
-                $uri = $request->getUri();
-                $query = $uri->getQuery();
+			case Client::AUTH_HTTP_TOKEN:
+				$request = $request->withHeader( 'Authorization', sprintf( 'token %s', $this->tokenOrLogin ) );
+				break;
 
-                $parameters = array(
-                    'client_id' => $this->tokenOrLogin,
-                    'client_secret' => $this->password,
-                );
+			case Client::AUTH_URL_CLIENT_ID:
+				$uri = $request->getUri();
+				$query = $uri->getQuery();
 
-                $query .= empty($query) ? '' : '&';
-                $query .= utf8_encode(http_build_query($parameters, '', '&'));
+				$parameters = array(
+					'client_id' => $this->tokenOrLogin,
+					'client_secret' => $this->password,
+				);
 
-                $uri = $uri->withQuery($query);
-                $request = $request->withUri($uri);
-                break;
+				$query .= empty( $query ) ? '' : '&';
+				$query .= utf8_encode( http_build_query( $parameters, '', '&' ) );
 
-            case Client::AUTH_URL_TOKEN:
-                $uri = $request->getUri();
-                $query = $uri->getQuery();
+				$uri = $uri->withQuery( $query );
+				$request = $request->withUri( $uri );
+				break;
 
-                $parameters = array('access_token' => $this->tokenOrLogin);
+			case Client::AUTH_URL_TOKEN:
+				$uri = $request->getUri();
+				$query = $uri->getQuery();
 
-                $query .= empty($query) ? '' : '&';
-                $query .= utf8_encode(http_build_query($parameters, '', '&'));
+				$parameters = array(
+					'access_token' => $this->tokenOrLogin,
+				);
 
-                $uri = $uri->withQuery($query);
-                $request = $request->withUri($uri);
-                break;
+				$query .= empty( $query ) ? '' : '&';
+				$query .= utf8_encode( http_build_query( $parameters, '', '&' ) );
 
-            case Client::AUTH_JWT:
-                $request = $request->withHeader('Authorization', sprintf('Bearer %s', $this->tokenOrLogin));
-                break;
+				$uri = $uri->withQuery( $query );
+				$request = $request->withUri( $uri );
+				break;
 
-            default:
-                throw new RuntimeException(sprintf('%s not yet implemented', $this->method));
-                break;
-        }
+			case Client::AUTH_JWT:
+				$request = $request->withHeader( 'Authorization', sprintf( 'Bearer %s', $this->tokenOrLogin ) );
+				break;
 
-        return $next($request);
-    }
+			default:
+				throw new RuntimeException( sprintf( '%s not yet implemented', $this->method ) );
+				break;
+		}
+
+		return $next($request);
+	}
 }

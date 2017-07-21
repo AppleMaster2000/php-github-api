@@ -10,28 +10,26 @@ use Psr\Http\Message\RequestInterface;
  *
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
-class PathPrepend implements Plugin
-{
-    private $path;
+class PathPrepend implements Plugin {
 
-    /**
-     * @param string $path
-     */
-    public function __construct($path)
-    {
-        $this->path = $path;
-    }
+	private $path;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function handleRequest(RequestInterface $request, callable $next, callable $first)
-    {
-        $currentPath = $request->getUri()->getPath();
-        $uri = $request->getUri()->withPath($this->path.$currentPath);
+	/**
+	 * @param string $path
+	 */
+	public function __construct( $path ) {
+		$this->path = $path;
+	}
 
-        $request = $request->withUri($uri);
+	/**
+	 * {@inheritdoc}
+	 */
+	public function handleRequest( RequestInterface $request, callable $next, callable $first ) {
+		$currentPath = $request->getUri()->getPath();
+		$uri = $request->getUri()->withPath( $this->path . $currentPath );
 
-        return $next($request);
-    }
+		$request = $request->withUri( $uri );
+
+		return $next($request);
+	}
 }

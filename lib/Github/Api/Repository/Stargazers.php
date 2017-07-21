@@ -10,30 +10,28 @@ use Github\Api\AcceptHeaderTrait;
  * @author Nicolas Dupont <nicolas@akeneo.com>
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
-class Stargazers extends AbstractApi
-{
-    use AcceptHeaderTrait;
+class Stargazers extends AbstractApi {
 
-    /**
-     * Configure the body type
-     *
-     * @see https://developer.github.com/v3/activity/starring/#alternative-response-with-star-creation-timestamps
-     *
-     * @param string $bodyType
-     *
-     * @return self
-     */
-    public function configure($bodyType = null)
-    {
-        if ('star' === $bodyType) {
-            $this->acceptHeaderValue = sprintf('application/vnd.github.%s.star+json', $this->client->getApiVersion());
-        }
+	use AcceptHeaderTrait;
 
-        return $this;
-    }
+	/**
+	 * Configure the body type
+	 *
+	 * @see https://developer.github.com/v3/activity/starring/#alternative-response-with-star-creation-timestamps
+	 *
+	 * @param string $bodyType
+	 *
+	 * @return self
+	 */
+	public function configure( $bodyType = null ) {
+		if ( 'star' === $bodyType ) {
+			$this->acceptHeaderValue = sprintf( 'application/vnd.github.%s.star+json', $this->client->getApiVersion() );
+		}
 
-    public function all($username, $repository)
-    {
-        return $this->get('/repos/'.rawurlencode($username).'/'.rawurlencode($repository).'/stargazers');
-    }
+		return $this;
+	}
+
+	public function all( $username, $repository ) {
+		return $this->get( '/repos/' . rawurlencode( $username ) . '/' . rawurlencode( $repository ) . '/stargazers' );
+	}
 }

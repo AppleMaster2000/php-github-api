@@ -11,63 +11,57 @@ use Github\Exception\MissingArgumentException;
  * @author Joseph Bielawski <stloyd@gmail.com>
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
-class Comments extends AbstractApi
-{
-    use AcceptHeaderTrait;
+class Comments extends AbstractApi {
 
-    /**
-     * Configure the body type.
-     *
-     * @link https://developer.github.com/v3/repos/comments/#custom-media-types
-     * @param string|null $bodyType
-     *
-     * @return self
-     */
-    public function configure($bodyType = null)
-    {
-        if (!in_array($bodyType, array('raw', 'text', 'html'))) {
-            $bodyType = 'full';
-        }
+	use AcceptHeaderTrait;
 
-        $this->acceptHeaderValue = sprintf('application/vnd.github.%s.%s+json', $this->client->getApiVersion(), $bodyType);
+	/**
+	 * Configure the body type.
+	 *
+	 * @link https://developer.github.com/v3/repos/comments/#custom-media-types
+	 * @param string|null $bodyType
+	 *
+	 * @return self
+	 */
+	public function configure( $bodyType = null ) {
+		if ( ! in_array( $bodyType, array( 'raw', 'text', 'html' ) ) ) {
+			$bodyType = 'full';
+		}
 
-        return $this;
-    }
+		$this->acceptHeaderValue = sprintf( 'application/vnd.github.%s.%s+json', $this->client->getApiVersion(), $bodyType );
 
-    public function all($username, $repository, $sha = null)
-    {
-        if (null === $sha) {
-            return $this->get('/repos/'.rawurlencode($username).'/'.rawurlencode($repository).'/comments');
-        }
+		return $this;
+	}
 
-        return $this->get('/repos/'.rawurlencode($username).'/'.rawurlencode($repository).'/commits/'.rawurlencode($sha).'/comments');
-    }
+	public function all( $username, $repository, $sha = null ) {
+		if ( null === $sha ) {
+			return $this->get( '/repos/' . rawurlencode( $username ) . '/' . rawurlencode( $repository ) . '/comments' );
+		}
 
-    public function show($username, $repository, $comment)
-    {
-        return $this->get('/repos/'.rawurlencode($username).'/'.rawurlencode($repository).'/comments/'.rawurlencode($comment));
-    }
+		return $this->get( '/repos/' . rawurlencode( $username ) . '/' . rawurlencode( $repository ) . '/commits/' . rawurlencode( $sha ) . '/comments' );
+	}
 
-    public function create($username, $repository, $sha, array $params)
-    {
-        if (!isset($params['body'])) {
-            throw new MissingArgumentException('body');
-        }
+	public function show( $username, $repository, $comment ) {
+		return $this->get( '/repos/' . rawurlencode( $username ) . '/' . rawurlencode( $repository ) . '/comments/' . rawurlencode( $comment ) );
+	}
 
-        return $this->post('/repos/'.rawurlencode($username).'/'.rawurlencode($repository).'/commits/'.rawurlencode($sha).'/comments', $params);
-    }
+	public function create( $username, $repository, $sha, array $params ) {
+		if ( ! isset( $params['body'] ) ) {
+			throw new MissingArgumentException( 'body' );
+		}
 
-    public function update($username, $repository, $comment, array $params)
-    {
-        if (!isset($params['body'])) {
-            throw new MissingArgumentException('body');
-        }
+		return $this->post( '/repos/' . rawurlencode( $username ) . '/' . rawurlencode( $repository ) . '/commits/' . rawurlencode( $sha ) . '/comments', $params );
+	}
 
-        return $this->patch('/repos/'.rawurlencode($username).'/'.rawurlencode($repository).'/comments/'.rawurlencode($comment), $params);
-    }
+	public function update( $username, $repository, $comment, array $params ) {
+		if ( ! isset( $params['body'] ) ) {
+			throw new MissingArgumentException( 'body' );
+		}
 
-    public function remove($username, $repository, $comment)
-    {
-        return $this->delete('/repos/'.rawurlencode($username).'/'.rawurlencode($repository).'/comments/'.rawurlencode($comment));
-    }
+		return $this->patch( '/repos/' . rawurlencode( $username ) . '/' . rawurlencode( $repository ) . '/comments/' . rawurlencode( $comment ), $params );
+	}
+
+	public function remove( $username, $repository, $comment ) {
+		return $this->delete( '/repos/' . rawurlencode( $username ) . '/' . rawurlencode( $repository ) . '/comments/' . rawurlencode( $comment ) );
+	}
 }

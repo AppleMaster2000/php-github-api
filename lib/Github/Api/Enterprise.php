@@ -14,37 +14,33 @@ use Github\Api\Enterprise\UserAdmin;
  * @author Joseph Bielawski <stloyd@gmail.com>
  * @author Guillermo A. Fisher <guillermoandraefisher@gmail.com>
  */
-class Enterprise extends AbstractApi
-{
-    /**
-     * @return Stats
-     */
-    public function stats()
-    {
-        return new Stats($this->client);
-    }
+class Enterprise extends AbstractApi {
 
-    /**
-     * @return License
-     */
-    public function license()
-    {
-        return new License($this->client);
-    }
+	/**
+	 * @return Stats
+	 */
+	public function stats() {
+		return new Stats( $this->client );
+	}
 
-    /**
-     * @return ManagementConsole
-     */
-    public function console()
-    {
-        return new ManagementConsole($this->client);
-    }
+	/**
+	 * @return License
+	 */
+	public function license() {
+		return new License( $this->client );
+	}
 
-    /**
-     * @return UserAdmin
-     */
-    public function userAdmin()
-    {
-        return new UserAdmin($this->client);
-    }
+	/**
+	 * @return ManagementConsole
+	 */
+	public function console() {
+		return new ManagementConsole( $this->client );
+	}
+
+	/**
+	 * @return UserAdmin
+	 */
+	public function userAdmin() {
+		return new UserAdmin( $this->client );
+	}
 }
