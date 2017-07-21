@@ -12,7 +12,11 @@ use Psr\Http\Message\RequestInterface;
  *
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
+<<<<<<< HEAD
 class Authentication{
+=======
+class Authentication implements Plugin {
+>>>>>>> fadae16028d32885aedb384cfd8b06cf4a3a92ac
 
 	private $tokenOrLogin;
 	private $password;

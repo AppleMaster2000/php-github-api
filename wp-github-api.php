@@ -22,7 +22,6 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 if ( ! class_exists( 'GithubAPI' ) ) {
 
 require_once( plugin_dir_path( __FILE__ ) . 'lib/Github/HttpClient/Builder.php' );
-
 	/**
 	 * GithubAPI class.
 	 */
